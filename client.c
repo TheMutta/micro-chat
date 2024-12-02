@@ -10,12 +10,15 @@
 #define BUFFER_SIZE 1024
 
 int main(int argc, char **argv) {
-	if (argc != 2) return -1;
+	if (argc != 3) {
+		printf("usage: client <address> <port>\n");
+		return -1;
+	}
 
 	int sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	struct hostent *server;
 	
-	server = gethostbyname("localhost");
+	server = gethostbyname(argv[1]);
 	if (server == NULL) {
 		fprintf(stderr,"ERROR, no such host");
 		exit(0);
@@ -25,7 +28,7 @@ int main(int argc, char **argv) {
 	memset(&server_addr, 0, sizeof(server_addr));
 	server_addr.sin_family = AF_INET;
 	memcpy(&server_addr.sin_addr.s_addr, server->h_addr, server->h_length);
-	server_addr.sin_port = htons(atoi(argv[1]));
+	server_addr.sin_port = htons(atoi(argv[2]));
 
 	if(connect(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
 		perror("connect");
@@ -46,4 +49,5 @@ int main(int argc, char **argv) {
 	}
 
 	close(sockfd);
+	return 0;
 }

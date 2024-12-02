@@ -33,6 +33,7 @@ void *handle_client(void *arg) {
 					int valread = read(client_fds[i].fd, msg_buffer, BUFFER_SIZE);
 					if (valread < 0) {
 						perror("Read error");
+						close(client_fds[i].fd);
 						break;
 					} else {
 						printf("User %d: %s\n", i + 1, msg_buffer);
@@ -48,7 +49,10 @@ void *handle_client(void *arg) {
 }
 
 int main(int argc, char **argv) {
-	if (argc != 2) return -1;
+	if (argc != 2) {
+		printf("usage: server <port>\n");
+		return -1;
+	}
 
 	int sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -88,5 +92,5 @@ int main(int argc, char **argv) {
 		printf("Added client. Now at: %lu\n", clients);
 	}
 
-
+	return 0;
 }
